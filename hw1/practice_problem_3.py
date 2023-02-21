@@ -31,10 +31,9 @@ def plot_distributions_and_data(data, noise):
     # Minimize negative log-likelihood using L-BFGS
     result = minimize(Gaussian_neg_log_likelihood, params_init, args=(data,), method='L-BFGS-B')
 
-    # Extract the estimated parameters
     mu_est, sigma_est = result.x
 
-    #Plot the data and the fitted Gaussian distribution
+    #Plot the data and fitted Gaussian distribution
     x = np.linspace(-10, 10, 100)
     dist = norm.pdf(x, loc= result.x[0], scale= result.x[1])
 
@@ -43,11 +42,9 @@ def plot_distributions_and_data(data, noise):
 
 
     """ fit a student t distribtion and add it to the plot """
-    # Set initial parameter values and bounds
     params0 = [1, 0, 2]
     bounds = [(0.01, 1000), (0, 1), (0, 3)]
 
-    # fit the Student_t distribution to the data with L-BFGS
     result = minimize(Student_t_neg_log_likelihood, params0, args=(data,), bounds=bounds, method='L-BFGS-B')
 
     df_est, mu_est, sigma_est = result.x
