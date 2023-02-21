@@ -29,7 +29,7 @@ def plot_distributions_and_data(data, noise):
     params_init = np.array([mu_init, sigma_init])
 
     # Minimize negative log-likelihood using L-BFGS
-    result = minimize(Gaussian_neg_log_likelihood, params_init, args=(data,), method='L-BFGS-B')
+    result = minimize(Gaussian_neg_log_likelihood, params_init, args=(data,), method='BFGS')
 
     mu_est, sigma_est = result.x
 
@@ -45,7 +45,7 @@ def plot_distributions_and_data(data, noise):
     params0 = [1, 0, 2]
     bounds = [(0.01, 1000), (0, 1), (0, 3)]
 
-    result = minimize(Student_t_neg_log_likelihood, params0, args=(data,), bounds=bounds, method='L-BFGS-B')
+    result = minimize(Student_t_neg_log_likelihood, params0, args=(data,), bounds=bounds, method='BFGS')
 
     df_est, mu_est, sigma_est = result.x
 
