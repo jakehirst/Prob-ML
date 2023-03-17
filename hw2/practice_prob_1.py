@@ -48,18 +48,21 @@ def get_posterior_mean_and_std(alpha, beta, x, y):
 def plot_heatmap(posterior_distribution, title):
     x, y = np.mgrid[-1:1:.01, -1:1:.01]
     pos = np.dstack((x, y))
-    #rv = multivariate_normal([0.5, -0.2], [[2.0, 0.3], [0.3, 0.5]])
     fig = plt.figure()
     ax = fig.add_subplot(111)
-    ax.contourf(x, y, posterior_distribution.pdf(pos))
+    surf = ax.contourf(x, y, posterior_distribution.pdf(pos))
     ax.set_xlabel("w0")
     ax.set_ylabel("w1")
     ax.set_title(title)
-    plt.show()
+    fig.colorbar(surf)
+    ax.plot([-0.3],[0.5], "r*")
+    folder = "/Users/jakehirst/Desktop/Prob ML/hw2/problem_1_images/"
+    plt.savefig(folder+ title.replace(" ", "_") + ".png")
+    #plt.show()
     plt.close()
     
 def plot_distribution_samples(Mn, Sn, num_examples, num_samples, posterior_distribution, temp_x, temp_y):
-    samples = multivariate_normal.rvs(mean=Mn, cov=Sn, size=5, random_state=0)
+    samples = multivariate_normal.rvs(mean=Mn, cov=Sn, size=num_samples, random_state=0)
     w0 = samples[:,0] ; w1 = samples[:,1]
     x_line = np.linspace(-1, 1, 20)
     y_line = np.empty((1,0))
@@ -71,7 +74,13 @@ def plot_distribution_samples(Mn, Sn, num_examples, num_samples, posterior_distr
         temp_w1 = w1[sample]    
         y_line = y(x_line, temp_w0, temp_w1)
         ax.plot(x_line, y_line, "b-*", label="true")
-    plt.show()
+    ax.set_xlabel("x")
+    ax.set_ylabel("y")
+    title = f"distribution samples with {num_examples} examples"
+    ax.set_title(title)
+    folder = "/Users/jakehirst/Desktop/Prob ML/hw2/problem_1_images/"
+    plt.savefig(folder + f"/distribution_samples_{num_examples}_examples.png")
+    # plt.show()
     plt.close()
     return
 
@@ -93,6 +102,7 @@ prior_std = I*2
 #plotting the heatmap of the prior
 prior_distribution = multivariate_normal(prior_mean, prior_std)
 plot_heatmap(prior_distribution, "heatmap of prior")
+plot_distribution_samples(prior_mean, prior_std, 0, 20, prior_distribution, [], [])
 
 alpha = 2
 beta = 25
@@ -111,7 +121,7 @@ for num_examples in num_examples_arr:
 
 
 """
-Bayesian linear regression notes
+Bayesian linear regression
 
 Baye's theorem:
 P(A|B) = (P(B|A)*P(A)) / P(B)
