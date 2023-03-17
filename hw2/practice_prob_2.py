@@ -43,9 +43,9 @@ def get_likelihood(x,w,y):
 
 def get_log_likelihood(x,w,y):
     hofx = logistic(x,w)
-    hofx[hofx<NONZERONUM] = NONZERONUM
-    hofx[hofx >= 1.0] = 1.0 - NONZERONUM
-    #l(θ)=∑ yilog(hθ(xi)) + (1−yi)log(1−hθ(xi))
+    hofx[hofx<NONZERONUM] = NONZERONUM #trying to add a nonzero term to prevent log(0) 
+    hofx[hofx >= 1.0] = 1.0 - NONZERONUM #trying to add a nonzero term to prevent log(0) 
+    #l(θ)=∑ yilog(hθ(xi)) + (1−yi)log(1−hθ(xi)) FORMULA
     left_side = y * np.log(hofx)
     right_side = (1 - y) * np.log(1-hofx)
     #print(left_side)
@@ -68,7 +68,7 @@ def get_1_gradient(x,w,y):
 """had to rewrite the gradient function because idk how to put x and y in when optimizing with scipy """
 def get_1_gradient_for_optimization(w):
     print(f"w = {w}")
-    hofx = logistic(X,w) + NONZERONUM
+    hofx = logistic(X,w) + NONZERONUM #trying to add a nonzero term to prevent log(0) 
     phi = np.matmul(X,w).reshape(hofx.shape)
     gradient_of_hofx = norm.pdf(phi,0,1)#gradient of a cdf is a pdf
     
@@ -113,13 +113,19 @@ def part_a(starting_w):
     max_iterations = 100
     tolerance = 1e-5
     train_features, train_labels = get_data("train.csv")
+    test_features, test_labels = get_data("test.csv")
     train_features["bias"] = 1 #adding a column of ones to the features as a bias term
-    
+    test_features["bias"] = 1 #adding a column of ones to the features as a bias term
+
     if(starting_w =="zeros"):
         w = np.zeros(train_features.shape[1])
     elif(starting_w == "random"):
         w = np.random.rand(train_features.shape[1])  
-        
+    
+    test_x = np.asarray(test_features)
+    test_y = np.asarray(test_labels, dtype="float64")
+    test_y = test_y.reshape(len(test_y), 1)
+    
     x = np.asarray(train_features)
     y = np.asarray(train_labels, dtype="float64")
     w = w.reshape(1,len(w))
@@ -146,7 +152,7 @@ def part_a(starting_w):
         if(abs(np.linalg.norm(w - wold)) < tolerance):
             print("converged")
             print("test accuracy:")
-            make_predictions(x,w,y)
+            make_predictions(test_x,w,test_y)
             break
         make_predictions(x,w,y)
     
@@ -161,13 +167,19 @@ def part_b(starting_w):
     max_iterations = 100
     tolerance = 1e-5
     train_features, train_labels = get_data("train.csv")
+    test_features, test_labels = get_data("test.csv")
     train_features["bias"] = 1 #adding a column of ones to the features as a bias term
-    
+    test_features["bias"] = 1 #adding a column of ones to the features as a bias term
+
     if(starting_w =="zeros"):
         w = np.zeros(train_features.shape[1])
     elif(starting_w == "random"):
         w = np.random.rand(train_features.shape[1])    
         
+    test_x = np.asarray(test_features)
+    test_y = np.asarray(test_labels, dtype="float64")
+    test_y = test_y.reshape(len(test_y), 1)        
+
     x = np.asarray(train_features)
     y = np.asarray(train_labels, dtype="float64")
     w = w.reshape(1,len(w))
@@ -176,8 +188,12 @@ def part_b(starting_w):
     Y = y
 
     optimized = minimize(get_log_likelihood_for_optimization, w, method='BFGS', jac=get_1_gradient_for_optimization)
+    print("training:")
     make_predictions(x,optimized.x,y)
+    print("test:")
+    make_predictions(test_x, optimized.x, test_y)
     return
+
 part_a("zeros")
 part_a("random")
 part_b("zeros")

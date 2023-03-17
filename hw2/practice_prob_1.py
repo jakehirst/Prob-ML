@@ -57,8 +57,8 @@ def plot_heatmap(posterior_distribution, title):
     fig.colorbar(surf)
     ax.plot([-0.3],[0.5], "r*")
     folder = "/Users/jakehirst/Desktop/Prob ML/hw2/problem_1_images/"
-    plt.savefig(folder+ title.replace(" ", "_") + ".png")
-    #plt.show()
+    #plt.savefig(folder+ title.replace(" ", "_") + ".png")
+    plt.show()
     plt.close()
     
 def plot_distribution_samples(Mn, Sn, num_examples, num_samples, posterior_distribution, temp_x, temp_y):
@@ -79,8 +79,8 @@ def plot_distribution_samples(Mn, Sn, num_examples, num_samples, posterior_distr
     title = f"distribution samples with {num_examples} examples"
     ax.set_title(title)
     folder = "/Users/jakehirst/Desktop/Prob ML/hw2/problem_1_images/"
-    plt.savefig(folder + f"/distribution_samples_{num_examples}_examples.png")
-    # plt.show()
+    #plt.savefig(folder + f"/distribution_samples_{num_examples}_examples.png")
+    plt.show()
     plt.close()
     return
 
